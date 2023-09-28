@@ -48,7 +48,7 @@ async function getNFTParameters() {
       {
         role: "user",
         content:
-          `read this article text and then come up with a name for your own nft project based on the APX token. The prompt must reference AstroPepeX and crypto culture and it must be witty and short. be very creative, the weirder the better. Don't include any special characters in the name. The article text to read is: "${articleText}". The name you provide cannot include any punctuation, colons, dashes, semicolons, or quotation marks. Do not include any line breaks in the reponse.`,
+          `read this article text and then come up with a name for your own nft project based on the APX token. The prompt must reference AstroPepeX and crypto culture and it must be witty and short. be very creative, the weirder the better. Don't include any special characters in the name. The article text to read is: "${articleText}". The name you provide cannot include any punctuation, colons, dashes, semicolons, or quotation marks. Do not include any line breaks in the reponse. The name should be under 10 characters`,
         // "describe the aesthetics of each of the top 10 nft projects of all time. your responses will be used as image prompts for DALL-E so please format the response to work. format the list title:description",
       },
     ]
@@ -64,7 +64,7 @@ async function getNFTParameters() {
       },
       {
         role: "user",
-        content: `Choose a random period of time between one day and one year, add it to today's unix date of 1695865174, and then provide the Unix timestamp for that future date. Respond only with the timestamp, no other text.`,
+        content: `Choose a random period of time between one day and one month, add it to today's unix date of 1695865174, and then provide the Unix timestamp for that future date. Respond only with the timestamp, no other text.`,
       },
     ],
   };
@@ -80,7 +80,7 @@ async function getNFTParameters() {
       {
         role: "user",
         content:
-          `Read this article text and then come up with an image prompt for your own nft project. Your response will used as a prompt for DALL-E to generate an image so please format your response accordingly. You must reply with the image prompt based on those descriptions. The prompt must reference AstroPepeX, feature visuals of pepe by Matt Furie, and crypto culture. be very creative, the weirder the better, and be extremely descriptive on how the image should look. The image will be used as artwork for an NFT, so please internalize the aesthetics of the most successful NFT and profile picture projects, and use that information to inform the image prompt. Only respond with the image prompt. As part of the image prompt, include a detailed description of the appearance of pepe the frog by Matt Furie. Be very descriptive and verbose in the prompt about pepe's head and face, especially the eyes. Describe pepe's eyes in extreme detail. Include a style of art, like pixel art, digital art, oil painting, pencil sketch, etc. The prompt should mention that it needs to work well as a profile photo at large and small sizes. The image you're prompting should make for the perfect profile photo for a crypto-enthusiast. Turn the creativity up to 10. Make sure to mention that the image should not include any logos or text. The prompt must be under 1000 characters. The nft project title is: ${nameGivenByAI} and its description is: "${descriptionGivenByAI}." The article text to read is: ${articleText}`,
+          `Read this article text and then come up with an image prompt for your own nft project. Your response will used as a prompt for DALL-E to generate an image so please format your response accordingly. You must reply with the image prompt based on the following information. The prompt must reference AstroPepeX, feature visuals of pepe by Matt Furie, and crypto culture. The meme is "AI is dev and artist". be very creative, the weirder the better, and be extremely descriptive on how the image should look. The image will be used as artwork for an NFT, so please internalize the aesthetics of the most successful NFT, internet memes, and profile picture projects. Ese that information to inform the image prompt. Only respond with the image prompt. As part of the image prompt, include a detailed description of the appearance of pepe the frog by Matt Furie. Be very descriptive and verbose in the prompt about pepe's head and face, especially the eyes. Describe pepe's eyes in extreme detail. Include a style of art, like pixel art, digital art, oil painting, pencil sketch, etc. The prompt should mention that it needs to work well as a profile photo at large and small sizes. The image you're prompting should make for the perfect profile photo for a crypto-enthusiast. Turn the creativity up to 10. Make sure to mention that the image should not include any logos or text. The prompt must be under 1000 characters. The nft project title is: ${nameGivenByAI} and its description is: "${descriptionGivenByAI}." The article text to read is: ${articleText}`,
       },
       {
         role: "assistant",
@@ -101,8 +101,11 @@ async function getNFTParameters() {
        namePrompts,
        { headers: headers }
      );
-     nameGivenByAI = responseName.data.choices[0].message.content;
-     console.log('nameGivenByAI', nameGivenByAI);
+     const responseNameString = responseName.data.choices[0].message.content;
+     const stripped = responseNameString.replace(/[^a-zA-Z0-9 ]/, '');
+     nameGivenByAI = stripped;
+     console.log('nameGivenByAI response', responseNameString);
+     console.log('nameGivenByAI stripped', nameGivenByAI);
      // parameters.push(nameGivenByAI);
    } catch (error) {
      console.error("Error making request:", error);
@@ -120,7 +123,7 @@ async function getNFTParameters() {
         },
         {
           role: "user",
-          content: `Write a short creative description for an NFT project named ${nameGivenByAI}. The NFT project is a derivative of the AstroPepeX ERC20 token. Read this article to better understand the project. The article to read is here: ${articleText}. Only respond with the description text for the derivative NFT project and keep the length under 60 words.`,
+          content: `Write a short creative description for an NFT project named ${nameGivenByAI}. The meme is "AI is dev and artist". The NFT project is a derivative of the AstroPepeX ERC20 token. Read this article to better understand the project. The article to read is here: ${articleText}. Only respond with the description text for the derivative NFT project and keep the length under 60 words.`,
         },
       ],
     };
@@ -161,7 +164,7 @@ async function getNFTParameters() {
         {
           role: "user",
           content:
-            `What should the symbol for the NFT project be? Base it on the token name ${nameGivenByAI}. Just reply with the ticker, no explanation or sentence or surrounding text`,
+            `What should the symbol for the NFT project be? Base it on the token name ${nameGivenByAI}. Just reply with the ticker, no explanation or sentence or surrounding text. Do not include any quotation marks or special characters in your response.`,
         },
       ],
     };
@@ -234,6 +237,9 @@ async function getNFTParameters() {
     console.log("Saving image to:", filePath);
     fs.writeFileSync(filePath, imageResponse.data);
     console.log("Image successfully saved.");
+    // wait 10 seconds before completing the script
+    console.log("Waiting 10 seconds before completing the script...");
+    await new Promise((resolve) => setTimeout(resolve, 10000));
   } catch (error) {
     console.error("DALL-E API request error:", error.message);
     if (error.response && error.response.data && error.response.data.error) {

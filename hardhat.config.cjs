@@ -6,6 +6,11 @@ dotenv.config();
 module.exports = {
   defaultNetwork: "goerli",
   networks: {
+    mainnet: {
+      url: process.env.MAINNET_URL || "",
+      accounts:
+        [process.env.MAINNET_PRIVATE_KEY] // dev deployer
+    },
     goerli: {
       url: process.env.GOERLI_URL || "",
       accounts:
