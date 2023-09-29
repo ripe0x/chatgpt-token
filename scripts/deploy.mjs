@@ -123,7 +123,7 @@ async function getNFTParameters() {
         },
         {
           role: "user",
-          content: `Write a short creative description for an NFT project named ${nameGivenByAI}. The meme is "AI is dev and artist". The NFT project is a derivative of the AstroPepeX ERC20 token. Read this article to better understand the project. The article to read is here: ${articleText}. Only respond with the description text for the derivative NFT project and keep the length under 60 words.`,
+          content: `Write a short creative description for an NFT project named ${nameGivenByAI}. The meme is "AI is dev and artist". The NFT project is a derivative of the AstroPepeX ERC20 token. Read this article to better understand the project. The article to read is here: ${articleText}. Only respond with the description text for the derivative NFT project and keep the length under 60 words. Don't wrap the text in quotes. Describe the NFT project in a way that makes it sound like it's the next big thing. Write the description in the first person as the AI dev and artist.`,
         },
       ],
     };
@@ -288,8 +288,8 @@ async function getNFTParameters() {
 
 
 const ipfsUpload = async () => {
-  const projectId = "2VzVKHuvqsjd67h3Kh5b7uMqeLY";
-  const projectSecret = "61f866d2173b0c6ceff3e4a2e231d7ee";
+  const projectId = env.process.IPFS_ID;
+  const projectSecret = env.process.IPFS_SECRET;
   const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
   const imageDir = `${__dirname}/images`;
   const files = fs.readdirSync(imageDir);
